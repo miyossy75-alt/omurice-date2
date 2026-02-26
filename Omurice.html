@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>早織さんと一緒に行きたいオムライス＆純喫茶</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      color: #333;
+    }
+    header {
+      background: linear-gradient(120deg, #ffb74d, #ff8a65);
+      color: #fff;
+      text-align: center;
+      padding: 24px 12px;
+    }
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+    }
+    header p {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .intro {
+      background: #fffde7;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+    }
+    .store-card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .store-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .store-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #e64a19;
+    }
+    .store-rating {
+      font-size: 0.9rem;
+      color: #777;
+    }
+    .store-meta {
+      font-size: 0.9rem;
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+    .store-section-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    .btn-row {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      text-decoration: none;
+      border: 1px solid #ff8a65;
+      color: #ff7043;
+      background: #fff3e0;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn:hover {
+      background: #ff7043;
+      color: #ffffff;
+    }
+    .kissaten-tag {
+      display: inline-block;
+      background: #e3f2fd;
+      color: #1565c0;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.8rem;
+      margin-right: 4px;
+      margin-top: 4px;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #777;
+      padding: 16px;
+    }
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 1.4rem;
+      }
+      .store-card {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>早織さんと一緒に行きたいオムライス＆純喫茶</h1>
+    <p>京都でふわとろオムライスとレトロ喫茶を楽しむための、とっておきリスト。</p>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p>京都市内のオムライスが美味しい洋食店 8 店舗と、その近くの純喫茶・レトロ喫茶をまとめました。<br>
+      気分やシーンにあわせて、オムライス＆珈琲を!</p>
+    </section>
+
+    <!-- 1. 北極星 四条河原町店 -->
+    <section class="store-card" id="hokkyokusei-kawaramachi">
+      <div class="store-header">
+        <div class="store-name">北極星 四条河原町店</div>
+        <div class="store-rating">★3.9 / 387件</div>
+      </div>
+      <div class="store-meta">
+        ふわとろ卵のオムライスが名物の老舗洋食チェーン。<br>
+        河原町ガーデン内でアクセス抜群、買い物ついでのオムライスデートに。
+      </div>
+      <div class="store-meta">
+        住所：京都市下京区四条通河原町東入真町68 京都住友ビル 7F<br>
+        営業時間：11:00～21:30（不定休） / 予算目安：￥1,000～2,000
+      </div>
+      <div class="store-section-title">近くの純喫茶</div>
+      <div>
+        <span class="kissaten-tag">喫茶ソワレ（徒歩約5分）</span>
+        <span class="kissaten-tag">フランソア喫茶室（徒歩圏内）</span>
+      </div>
+      <div class="btn-row">
+        <a class="btn" href="https://maps.app.goo.gl/TFQxuqnFqDsJwkbZ6" target="_blank" rel="noopener">Googleマップを開く</a>
+      </div>
+    </section>
+
+    <!-- 2. 喫茶me -->
+    <section class="store-card" id="kissa-me">
+      <div class="store-header">
+        <div class="store-name">喫茶me（キッサミー）</div>
+        <div class="store-rating">★3.7 / 113件</div>
+      </div>
+      <div class="store-meta">
+        銀座由来のぷるぷるオムライスと、歌謡曲が流れる昭和レトロ空間が魅力。<br>
+        クリームソーダと一緒に楽しみたい、写真映え重視の一軒。
+      </div>
+      <div class="store-meta">
+        住所：京都市左京区岡崎成勝寺町1-8<br>
+        営業時間：11:00～17:00（平日）、～18:00（土日祝） / 火曜＋不定休
+      </div>
+      <div class="store-section-title">近くの純喫茶</div>
+      <div>
+        <span class="kissaten-tag">岡崎エリアのレトロ喫茶いろいろ</span>
+      </div>
+      <div class="btn-row">
+        <a class="btn" href="https://maps.app.goo.gl/Se2Vn4c62qviJcf8A" target="_blank" rel="noopener">Googleマップを開く</a>
+      </div>
+    </section>
+
+    <!-- 3. おむらはうす 金閣寺店 -->
+    <section class="store-card" id="omurahouse-kinkakuji">
+      <div class="store-header">
+        <div class="store-name">おむらはうす 金閣寺店</div>
+        <div class="store-rating">★4.3 / 579件</div>
+      </div>
+      <div class="store-meta">
+        湯葉や和風だしなど、京都らしい創作オムライスが楽しめる専門店。<br>
+        金閣寺観光とセットにしやすい、ボリューム満点の一皿。
+      </div>
+      <div class="store-meta">
+        住所：京都市北区衣笠総門町10-9<br>
+        営業時間：11:00～15:30 / 月曜休（祝日の場合は翌日）
+      </div>
+      <div class="store-section-title">近くの純喫茶</div>
+      <div>
+        <span class="kissaten-tag">喫茶 静香（徒歩10分前後）</span>
+      </div>
+      <div class="btn-row">
+        <a class="btn" href="https://maps.app.goo.gl/TAfyfhShXPP94Mzu6" target="_blank" rel="noopener">Googleマップを開く</a>
+      </div>
+    </section>
+
+    <!-- 4. 洋食屋 キッチン 秀 -->
+    <section class="store-card" id="kitchen-hide">
+      <div class="store-header">
+        <div class="store-name">洋食屋 キッチン 秀</div>
+        <div class="store-rating">★4.0 / 139件</div>
+      </div>
+      <div class="store-meta">
+        新京極の路地裏・花遊小路にある、小さな洋食屋さん。<br>
+        手作りハンバーグ＆オムライスで、肩肘張らない路地裏デートにぴったり。
+      </div>
+      <div class="store-meta">
+        住所：京都市中京区中之町565-10<br>
+        営業時間：11:30～15:00、18:00～21:00 / 水曜休
+      </div>
+      <div class="store-section-title">近くの純喫茶</div>
+      <div>
+        <span class="kissaten-tag">喫茶 築地（徒歩5～10分）</span>
+        <span class="kissaten-tag">フランソア喫茶室（徒歩10分前後）</span>
+      </div>
+      <div class="btn-row">
+        <a class="btn" href="https://maps.app.goo.gl/sT8pnNqX2BAgEY1r7" target="_blank" rel="noopener">Googleマップを開く</a>
+      </div>
+    </section>
+
+    <!-- 5. ザ・洋食屋 キチ・キチ -->
+    <section class="store-card" id="kichikichi">
+      <div class="store-header">
+        <div class="store-name">ザ・洋食屋 キチ・キチ</div>
+        <div class="store-rating">★4.1 / 2,282件</div>
+      </div>
+      <div class="store-meta">
+        神業パフォーマンスで有名な、完全予約制のオムライス専門店。<br>
+        記念日や特別な日に、早織さんと体験したい一軒。
+      </div>
+      <div class="store-meta">
+        住所：京都市中京区材木町185-4<br>
+        営業時間：17:00～21:00（平日）、11:30～14:00＆17:00～21:00（土日祝）
+      </div>
+      <div class="store-section-title">近くの純喫茶</div>
+      <div>
+        <span class="kissaten-tag">スマート珈琲店（徒歩10分前後）</span>
+        <span class="kissaten-tag">前田珈琲 明倫店（徒歩圏内）</span>
+      </div>
+      <div class="btn-row">
+        <a class="btn" href="https://maps.app.goo.gl/GpwtKcBxemUStxpbA" target="_blank" rel="noopener">Googleマップを開く</a>
+      </div>
+    </section>
+
+    <!-- 6. サラダの店 サンチョ 河原町本店 -->
+    <section class="store-card" id="sancho-kawaramachi">
+      <div class="store-header">
+        <div class="store-name">サラダの店 サンチョ 河原町本店</div>
+        <div class="store-rating">★4.4 / 817件</div>
+      </div>
+      <div class="store-meta">
+        自家製ドレッシングの山盛りサラダが名物の洋食店。<br>
+        オムレツやハンバーグと一緒に、ちょっとヘルシーなオムライスディナーに。
+      </div>
+      <div class="store-meta">
+        住所：京都市中京区裏寺町中之町572<br>
+        営業時間：11:30～15:30、17:00～22:00 / 水曜休（連休あり）
+      </div>
+      <div class="store-section-title">近くの純喫茶</div>
+      <div>
+        <span class="kissaten-tag">喫茶ソワレ（徒歩10分前後）</span>
+        <span class="kissaten-tag">喫茶 築地（徒歩5分前後）</span>
+      </div>
+      <div class="btn-row">
+        <a class="btn" href="https://maps.app.goo.gl/JvcqdtSgn7nnquKdA" target="_blank" rel="noopener">Googleマップを開く</a>
+      </div>
+    </section>
+
+    <!-- 7. 京都洋食 スター食堂 烏丸分店 -->
+    <section class="store-card" id="star-shokudo-karasuma">
+      <div class="store-header">
+        <div class="store-name">京都洋食 スター食堂 烏丸分店</div>
+        <div class="store-rating">★4.5 / 717件</div>
+      </div>
+      <div class="store-meta">
+        大正14年創業・スター食堂グループの洋食店。<br>
+        ハンバーグと海老フライ、コーンスープなど「ザ・洋食」を楽しめる一軒。
+      </div>
+      <div class="store-meta">
+        住所：京都市中京区帯屋町581（大丸京都店 四条高倉駐車場 B1）<br>
+        営業時間：11:30～16:00＆17:30～21:30（平日）、11:30～21:30（土日祝）
+      </div>
+      <div class="store-section-title">近くの純喫茶</div>
+      <div>
+        <span class="kissaten-tag">小川珈琲 堺町錦店（徒歩10分前後）</span>
+        <span class="kissaten-tag">喫茶マドラグ（地下鉄一駅圏内）</span>
+      </div>
+      <div class="btn-row">
+        <a class="btn" href="https://maps.app.goo.gl/9ANbnF3T8UZ5VmiR8" target="_blank" rel="noopener">Googleマップを開く</a>
+      </div>
+    </section>
+
+    <!-- 8. グリル小宝 -->
+    <section class="store-card" id="grill-kodakara">
+      <div class="store-header">
+        <div class="store-name">グリル小宝</div>
+        <div class="store-rating">★4.2 / 1,774件</div>
+      </div>
+      <div class="store-meta">
+        1961年創業の老舗洋食店。大きなオムライスに濃厚ドビソースがたっぷり。<br>
+        平安神宮や岡崎公園と組み合わせたお散歩デートにも最適。
+      </div>
+      <div class="store-meta">
+        住所：京都市左京区岡崎北御所町46<br>
+        営業時間：11:30～20:30 / 火・水曜休
+      </div>
+      <div class="store-section-title">近くの純喫茶</div>
+      <div>
+        <span class="kissaten-tag">喫茶me（徒歩圏内）</span>
+        <span class="kissaten-tag">岡崎エリアのレトロ喫茶いろいろ</span>
+      </div>
+      <div class="btn-row">
+        <a class="btn" href="https://maps.app.goo.gl/928yrwRRShKn32b69" target="_blank" rel="noopener">Googleマップを開く</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    ※ 営業時間・定休日・評価は訪問前に最新情報をご確認ください。
+  </footer>
+</body>
+</html>
