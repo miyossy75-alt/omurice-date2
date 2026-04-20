@@ -139,6 +139,13 @@
       padding: 12px 14px; font-size: 0.85rem; color: #795548; margin-bottom: 14px;
     }
     input[type="password"] { font-family: monospace; }
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #2e7d32; color: #fff; padding: 14px 24px; border-radius: 10px;
+      font-size: 1rem; z-index: 200; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
   </style>
 </head>
 <body>
@@ -257,6 +264,7 @@
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
 <footer>データはブラウザのローカルストレージに保存されます</footer>
 
 <script>
@@ -356,11 +364,22 @@
     }
   }
 
+  function showToast(msg, color) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = color || '#2e7d32';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
   async function saveReceipt() {
     const date = document.getElementById('date').value;
     const amount = document.getElementById('amount').value;
     const store = document.getElementById('store').value.trim();
-    if (!date || !amount || !store) { alert('日付・金額・店舗名は必須です'); return; }
+    if (!date || !amount || !store) { showToast('日付・金額・店舗名は必須です', '#c0392b'); return; }
+    const btn = document.querySelector('.btn-primary');
+    btn.disabled = true;
+    btn.textContent = '送信中…';
     const imgEl = document.getElementById('preview-img');
     const receipt = {
       id: Date.now(), date, amount: parseInt(amount, 10), store,
@@ -371,20 +390,21 @@
     };
     receipts.unshift(receipt);
     save();
-
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbw5jHAWHMdDzmuCUrfToDWHW1Ck3zmKiprBqC4GtkHxlQPNwPmrS46hy0thSMgIJbkYHw/exec';
     try {
-      await fetch(gasUrl, {
+      await fetch(GAS_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date, amount: parseInt(amount, 10), store, category: receipt.category, items: receipt.items, notes: receipt.notes })
+        body: JSON.stringify({ date, amount: receipt.amount, store, category: receipt.category, items: receipt.items, notes: receipt.notes })
       });
       resetForm();
-      alert('保存しました！スプレッドシートにも記録しました。');
+      showToast('✅ 保存完了！シートに記録しました');
     } catch(err) {
       resetForm();
-      alert('ローカルに保存しました。スプレッドシートへの送信に失敗しました：' + err.message);
+      showToast('⚠️ ローカル保存済み（シート送信失敗）', '#e67e22');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '保存する';
     }
   }
 
