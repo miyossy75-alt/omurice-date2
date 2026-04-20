@@ -356,20 +356,36 @@
     }
   }
 
-  function saveReceipt() {
+  async function saveReceipt() {
     const date = document.getElementById('date').value;
     const amount = document.getElementById('amount').value;
     const store = document.getElementById('store').value.trim();
     if (!date || !amount || !store) { alert('日付・金額・店舗名は必須です'); return; }
     const imgEl = document.getElementById('preview-img');
-    receipts.unshift({
+    const receipt = {
       id: Date.now(), date, amount: parseInt(amount, 10), store,
       category: document.getElementById('category').value,
       items: document.getElementById('items').value.trim(),
       notes: document.getElementById('notes').value.trim(),
       image: imgEl.style.display !== 'none' ? imgEl.src : null,
-    });
-    save(); resetForm(); alert('保存しました！');
+    };
+    receipts.unshift(receipt);
+    save();
+
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbw5jHAWHMdDzmuCUrfToDWHW1Ck3zmKiprBqC4GtkHxlQPNwPmrS46hy0thSMgIJbkYHw/exec';
+    try {
+      await fetch(gasUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date, amount: parseInt(amount, 10), store, category: receipt.category, items: receipt.items, notes: receipt.notes })
+      });
+      resetForm();
+      alert('保存しました！スプレッドシートにも記録しました。');
+    } catch(err) {
+      resetForm();
+      alert('ローカルに保存しました。スプレッドシートへの送信に失敗しました：' + err.message);
+    }
   }
 
   function resetForm() {
