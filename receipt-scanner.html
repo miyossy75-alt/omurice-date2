@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>仕入れレシート記録ツール</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2c5f8a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="レシート記録">
+  <link rel="apple-touch-icon" href="icon.svg">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -148,7 +153,6 @@
   <button class="tab-btn" onclick="showTab('settings')">設定</button>
 </div>
 
-<!-- 記録タブ -->
 <div id="tab-input" class="tab-panel active">
   <div class="card">
     <h2>レシート画像</h2>
@@ -161,7 +165,6 @@
     <button class="btn-ai" id="ai-btn" onclick="analyzeReceipt()" disabled>✨ AIで自動読み取り</button>
     <div class="ai-status" id="ai-status"></div>
   </div>
-
   <div class="card">
     <h2>仕入れ情報を入力</h2>
     <div class="row2">
@@ -194,7 +197,6 @@
   </div>
 </div>
 
-<!-- 一覧タブ -->
 <div id="tab-list" class="tab-panel">
   <div class="toolbar">
     <input type="text" id="search" placeholder="店名・品目で検索" oninput="renderList()">
@@ -212,7 +214,6 @@
   <div class="receipt-list" id="receipt-list"></div>
 </div>
 
-<!-- 集計タブ -->
 <div id="tab-summary" class="tab-panel">
   <div class="summary-grid" id="summary-grid"></div>
   <div class="card">
@@ -231,7 +232,6 @@
   </div>
 </div>
 
-<!-- 設定タブ -->
 <div id="tab-settings" class="tab-panel">
   <div class="card">
     <h2>AI自動読み取り設定</h2>
@@ -246,7 +246,6 @@
   </div>
 </div>
 
-<!-- 削除確認モーダル -->
 <div class="modal-overlay" id="delete-modal">
   <div class="modal">
     <h3>この記録を削除しますか？</h3>
@@ -269,24 +268,17 @@
   let currentImageType = null;
 
   document.getElementById('date').value = new Date().toISOString().slice(0, 10);
-
-  // APIキー読み込み
   const savedKey = localStorage.getItem(API_KEY_STORAGE) || '';
   document.getElementById('api-key').value = savedKey;
   updateAiBtn();
 
   function saveApiKey() {
-    const key = document.getElementById('api-key').value.trim();
-    localStorage.setItem(API_KEY_STORAGE, key);
+    localStorage.setItem(API_KEY_STORAGE, document.getElementById('api-key').value.trim());
     updateAiBtn();
   }
-
   function updateAiBtn() {
-    const key = localStorage.getItem(API_KEY_STORAGE) || '';
-    const btn = document.getElementById('ai-btn');
-    btn.disabled = !(key && currentImageBase64);
+    document.getElementById('ai-btn').disabled = !(localStorage.getItem(API_KEY_STORAGE) && currentImageBase64);
   }
-
   function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(receipts)); }
 
   function showTab(name) {
@@ -306,10 +298,8 @@
       const img = document.getElementById('preview-img');
       img.src = ev.target.result;
       img.style.display = 'block';
-      // base64部分だけ抽出
-      const dataUrl = ev.target.result;
       currentImageType = file.type || 'image/jpeg';
-      currentImageBase64 = dataUrl.split(',')[1];
+      currentImageBase64 = ev.target.result.split(',')[1];
       updateAiBtn();
     };
     reader.readAsDataURL(file);
@@ -318,13 +308,11 @@
   async function analyzeReceipt() {
     const apiKey = localStorage.getItem(API_KEY_STORAGE) || '';
     if (!apiKey || !currentImageBase64) return;
-
     const btn = document.getElementById('ai-btn');
     const status = document.getElementById('ai-status');
     btn.disabled = true;
     status.className = 'ai-status loading';
     status.textContent = '🔍 AIがレシートを読み取り中…';
-
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -340,44 +328,24 @@
           messages: [{
             role: 'user',
             content: [
-              {
-                type: 'image',
-                source: { type: 'base64', media_type: currentImageType, data: currentImageBase64 }
-              },
-              {
-                type: 'text',
-                text: `このレシート画像から以下の情報をJSON形式で抽出してください。
-読み取れない項目はnullにしてください。日付はYYYY-MM-DD形式で。
-{
-  "date": "YYYY-MM-DD",
-  "amount": 合計金額の数値のみ,
-  "store": "店舗名",
-  "items": "品目の一覧（カンマ区切り）"
-}
-JSONのみ返してください。`
-              }
+              { type: 'image', source: { type: 'base64', media_type: currentImageType, data: currentImageBase64 } },
+              { type: 'text', text: 'このレシート画像から以下の情報をJSON形式で抽出してください。読み取れない項目はnullにしてください。日付はYYYY-MM-DD形式で。\n{"date":"YYYY-MM-DD","amount":合計金額の数値のみ,"store":"店舗名","items":"品目の一覧（カンマ区切り）"}\nJSONのみ返してください。' }
             ]
           }]
         })
       });
-
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err?.error?.message || `APIエラー (${res.status})`);
       }
-
       const data = await res.json();
-      const text = data.content[0].text.trim();
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      const jsonMatch = data.content[0].text.trim().match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error('レスポンスの解析に失敗しました');
-
       const parsed = JSON.parse(jsonMatch[0]);
-
       if (parsed.date) document.getElementById('date').value = parsed.date;
       if (parsed.amount) document.getElementById('amount').value = parsed.amount;
       if (parsed.store) document.getElementById('store').value = parsed.store;
       if (parsed.items) document.getElementById('items').value = parsed.items;
-
       status.className = 'ai-status success';
       status.textContent = '✅ 読み取り完了！内容を確認してから保存してください。';
     } catch (err) {
@@ -401,9 +369,7 @@ JSONのみ返してください。`
       notes: document.getElementById('notes').value.trim(),
       image: imgEl.style.display !== 'none' ? imgEl.src : null,
     });
-    save();
-    resetForm();
-    alert('保存しました！');
+    save(); resetForm(); alert('保存しました！');
   }
 
   function resetForm() {
@@ -422,7 +388,7 @@ JSONのみ返してください。`
     const cat = document.getElementById('filter-cat').value;
     const container = document.getElementById('receipt-list');
     const filtered = receipts.filter(r => {
-      const matchQ = !q || r.store.toLowerCase().includes(q) || (r.items || '').toLowerCase().includes(q);
+      const matchQ = !q || r.store.toLowerCase().includes(q) || (r.items||'').toLowerCase().includes(q);
       return matchQ && (!cat || r.category === cat);
     });
     if (!filtered.length) {
@@ -433,10 +399,10 @@ JSONのみ返してください。`
       <div class="receipt-item">
         <div class="store">${esc(r.store)}</div>
         <div class="amount">¥${r.amount.toLocaleString()}</div>
-        <div class="meta">${r.date}${r.category ? ' ・ ' + esc(r.category) : ''}${r.items ? '<br>' + esc(r.items) : ''}</div>
-        ${r.notes ? `<div class="meta" style="color:#aaa">${esc(r.notes)}</div>` : ''}
+        <div class="meta">${r.date}${r.category?' ・ '+esc(r.category):''}${r.items?'<br>'+esc(r.items):''}</div>
+        ${r.notes?`<div class="meta" style="color:#aaa">${esc(r.notes)}</div>`:''}
         <div class="actions">
-          ${r.image ? `<button class="btn-icon" onclick="viewImage(${r.id})">画像</button>` : ''}
+          ${r.image?`<button class="btn-icon" onclick="viewImage(${r.id})">画像</button>`:''}
           <button class="btn-icon danger" onclick="askDelete(${r.id})">削除</button>
         </div>
       </div>`).join('');
@@ -445,40 +411,37 @@ JSONのみ返してください。`
   function esc(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
-
   function viewImage(id) {
     const r = receipts.find(x => x.id === id);
     if (!r?.image) return;
     const w = window.open();
     w.document.write(`<img src="${r.image}" style="max-width:100%">`);
   }
-
   function askDelete(id) {
     const r = receipts.find(x => x.id === id);
     deleteTarget = id;
     document.getElementById('delete-desc').textContent = `${r.date} / ${r.store} / ¥${r.amount.toLocaleString()}`;
     document.getElementById('delete-modal').classList.add('open');
   }
-
   function closeModal() { document.getElementById('delete-modal').classList.remove('open'); deleteTarget = null; }
   function confirmDelete() { receipts = receipts.filter(r => r.id !== deleteTarget); save(); closeModal(); renderList(); }
 
   function renderSummary() {
-    const total = receipts.reduce((s, r) => s + r.amount, 0);
-    const thisMonth = new Date().toISOString().slice(0, 7);
-    const monthTotal = receipts.filter(r => r.date.startsWith(thisMonth)).reduce((s, r) => s + r.amount, 0);
+    const total = receipts.reduce((s,r) => s+r.amount, 0);
+    const thisMonth = new Date().toISOString().slice(0,7);
+    const monthTotal = receipts.filter(r => r.date.startsWith(thisMonth)).reduce((s,r) => s+r.amount, 0);
     document.getElementById('summary-grid').innerHTML = `
       <div class="stat-card"><div class="val">${receipts.length}</div><div class="lbl">総記録件数</div></div>
       <div class="stat-card"><div class="val">¥${total.toLocaleString()}</div><div class="lbl">累計金額</div></div>
       <div class="stat-card"><div class="val">¥${monthTotal.toLocaleString()}</div><div class="lbl">今月の合計</div></div>`;
     const cats = {};
-    receipts.forEach(r => { const k = r.category || '未分類'; if (!cats[k]) cats[k]={count:0,total:0}; cats[k].count++; cats[k].total+=r.amount; });
+    receipts.forEach(r => { const k=r.category||'未分類'; if(!cats[k]) cats[k]={count:0,total:0}; cats[k].count++; cats[k].total+=r.amount; });
     document.querySelector('#category-table tbody').innerHTML =
       Object.entries(cats).sort((a,b)=>b[1].total-a[1].total).map(([k,v])=>
         `<tr><td>${esc(k)}</td><td>${v.count}件</td><td>¥${v.total.toLocaleString()}</td></tr>`
       ).join('') || '<tr><td colspan="3" style="text-align:center;color:#aaa">データなし</td></tr>';
     const months = {};
-    receipts.forEach(r => { const k=r.date.slice(0,7); if (!months[k]) months[k]={count:0,total:0}; months[k].count++; months[k].total+=r.amount; });
+    receipts.forEach(r => { const k=r.date.slice(0,7); if(!months[k]) months[k]={count:0,total:0}; months[k].count++; months[k].total+=r.amount; });
     document.querySelector('#monthly-table tbody').innerHTML =
       Object.entries(months).sort((a,b)=>b[0].localeCompare(a[0])).map(([k,v])=>
         `<tr><td>${k}</td><td>${v.count}件</td><td>¥${v.total.toLocaleString()}</td></tr>`
@@ -495,6 +458,8 @@ JSONのみ返してください。`
     a.download = `receipts_${new Date().toISOString().slice(0,10)}.csv`;
     a.click();
   }
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
 </body>
 </html>
