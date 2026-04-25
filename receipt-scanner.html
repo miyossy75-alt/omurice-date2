@@ -386,23 +386,25 @@
     const btn = document.querySelector('.btn-primary');
     btn.disabled = true;
     btn.textContent = '送信中…';
-    const imgEl = document.getElementById('preview-img');
     const receipt = {
       id: Date.now(), date, amount: parseInt(amount, 10), store,
       category: document.getElementById('category').value,
       items: document.getElementById('items').value.trim(),
       notes: document.getElementById('notes').value.trim(),
-      image: imgEl.style.display !== 'none' ? imgEl.src : null,
     };
-    receipts.unshift(receipt);
-    save();
     try {
-      await fetch(GAS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date, amount: receipt.amount, store, category: receipt.category, items: receipt.items, notes: receipt.notes })
-      });
+      receipts.unshift(receipt);
+      save();
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 10000);
+      try {
+        await fetch(GAS_URL, {
+          method: 'POST', mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date, amount: receipt.amount, store, category: receipt.category, items: receipt.items, notes: receipt.notes }),
+          signal: ctrl.signal,
+        });
+      } finally { clearTimeout(timer); }
       resetForm();
       showToast('✅ 保存完了！シートに記録しました');
     } catch(err) {
@@ -444,7 +446,6 @@
         <div class="meta">${r.date}${r.category?' ・ '+esc(r.category):''}${r.items?'<br>'+esc(r.items):''}</div>
         ${r.notes?`<div class="meta" style="color:#aaa">${esc(r.notes)}</div>`:''}
         <div class="actions">
-          ${r.image?`<button class="btn-icon" onclick="viewImage(${r.id})">画像</button>`:''}
           <button class="btn-icon danger" onclick="askDelete(${r.id})">削除</button>
         </div>
       </div>`).join('');
